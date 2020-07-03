@@ -1,0 +1,32 @@
+* {
+    font-weight: bold;
+outline:  none;
+}
+
+.row {
+    margin: 10px;
+}
+
+
+.btn-operator {
+    background-color: #3880ff;
+}
+
+
+
+.btn-default {
+    background-color: #aaa;
+}
+/* 
+button:hover {
+    opacity: 0.5;
+    transition: 0.5s;
+} */
+
+#display {
+    width: 100%;
+    text-align: right;
+    border: none;
+    height: 100px;
+    font-size: 30pt;
+}
