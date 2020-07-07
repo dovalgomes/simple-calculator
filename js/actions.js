@@ -4,8 +4,8 @@ var result_display = document.getElementById('result_display');
 var numbers = document.getElementsByClassName('number');
 var reset = document.getElementById('reset');
 
-var position_operation = 0;
-var operation = '';
+var position_operation = undefined;
+var operation = undefined;
 
 // Buttons Functions
 
@@ -22,39 +22,48 @@ function showDisplayValue(value) {
     }
 
     display.value += value;
-    equal(operation, true);
-
 }
 
-function resumeDisplay(display_operation) {
-    if (display_operation.length % 5 === 0) {
-        display.value = result_display.value;
-    }
-}
 
 // Operations Functions
 
-function sum() {
-    if (!lastIsOperation()) {
-        display.value += '+';
+function backspace() {
+    if (display.value != '' && display.value != '0') {
+        display.value = display.value.substring(0, display.value.length - 1);
+        if (display.value === '') {
+            display.value = '0';
+        }
+    } else {
+        display.value = '0';
     }
 }
 
-function sub() {
-    if (!lastIsOperation()) {
-        display.value += '-';
+function comma() {
+
+    if (operation) {
+        const display_operation = display.value.split(operation);
+        var input2 = display_operation[1];
+
+        if(input2 && input2.indexOf('.') === -1){
+            display.value += '.';
+        }
+
+    } else {
+        if (display.value.indexOf('.') === -1) {
+            display.value += '.';
+        }
     }
 }
 
-function multiply() {
-    if (!lastIsOperation()) {
-        display.value += 'x';
-    }
-}
+function send_operation(operator) {
 
-function division() {
+    const splited_display = display.value.split(operator);
+    if (splited_display.length > 1) {
+        equal(true);
+    }
+
     if (!lastIsOperation()) {
-        display.value += '÷';
+        display.value += operator;
     }
 }
 
@@ -64,65 +73,73 @@ function invert() {
     }
 }
 
-function equal(operation, resume) {
-    if (operation) {
-        const display_operation = display.value.split(operation);
+function equal(resume) {
 
-        var sucess = false;
+    try {
+        if (operation && !lastIsOperation()) {
+            const display_operation = display.value.split(operation);
 
-        switch (operation) {
-            case '+':
-                var sum = 0;
-                display_operation.map(value => {
-                    value = parseFloat(value);
-                    sum += value;
-                });
-                result_display.value = sum;
-                break;
-            case '-':
-                var sub = 0;
-                display_operation.map(value => {
-                    value = parseFloat(value);
-                    sub -= value;
-                });
-                result_display.value = sub;
-                sucess = true;
-                break;
-            case 'x':
-                var multiply = 0;
-                var input1 = parseFloat(display_operation[0]);
-                var input2 = parseFloat(display_operation[1]);
+            switch (operation) {
+                case '+':
+                    var sum = 0;
+                    var input1 = parseFloat(display_operation[0]);
+                    var input2 = parseFloat(display_operation[1]);
 
-                multiply = input1 * input2;
-                result_display.value = multiply;
-                sucess = true;
-                break;
-            case '÷':
-                var division = 0;
-                var input1 = parseFloat(display_operation[0]);
-                var input2 = parseFloat(display_operation[1]);
+                    sum = input1 + input2;
+                    result_display.value = sum;
+                    break;
+                case '-':
+                    var sub = 0;
+                    var input1 = parseFloat(display_operation[0]);
+                    var input2 = parseFloat(display_operation[1]);
 
-                if (input2 === 0) {
-                    display.value = 'Impossível Dividir por 0';
-                    sucess = false;
-                } else {
-                    division = input1 / input2;
-                    result_display.value = division;
-                    sucess = true;
-                }
-                break;
-            default:
-                break;
-        }
+                    sub = input1 - input2;
+                    result_display.value = sub;
+                    break;
+                case 'x':
+                    var multiply = 0;
+                    var input1 = parseFloat(display_operation[0]);
+                    var input2 = parseFloat(display_operation[1]);
 
-        // resumeDisplay(display_operation);
+                    multiply = input1 * input2;
+                    result_display.value = multiply;
+                    break;
+                case '÷':
+                    var division = 0;
+                    var input1 = parseFloat(display_operation[0]);
+                    var input2 = parseFloat(display_operation[1]);
 
-        if (sucess) {
+                    if (input2 === 0) {
+                        throw 'Impossível Dividir por 0';
+                    } else {
+                        division = input1 / input2;
+                        result_display.value = division;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
             display.value = result_display.value;
         }
+
+        operation = undefined;
+        position_operation = undefined;
+
+        console.log(operation);
+
+    } catch (err) {
+        reset_ac();
+        display.value = err;
     }
 }
 
+function reset_ac() {
+    display.value = '0';
+    result_display.value = '0';
+    operation = undefined;
+    position_operation = undefined;
+}
 
 function lastIsOperation() {
     const display_trim = display.value.trim();
@@ -132,34 +149,39 @@ function lastIsOperation() {
 }
 
 // DOM Functions
-
 function invert_click() {
     document.getElementById('invert').addEventListener("click", function () {
         invert();
     });
 }
 
+function comma_click() {
+    document.getElementById('comma').addEventListener("click", function () {
+        comma();
+    });
+}
+
 function sum_click() {
     document.getElementById('sum').addEventListener("click", function () {
-        sum();
+        send_operation('+');
     });
 }
 
 function sub_click() {
     document.getElementById('sub').addEventListener("click", function () {
-        sub();
+        send_operation('-');
     });
 }
 
 function division_click() {
     document.getElementById('division').addEventListener("click", function () {
-        division();
+        send_operation('÷');
     });
 }
 
 function multiply_click() {
     document.getElementById('multiply').addEventListener("click", function () {
-        multiply();
+        send_operation('x');
     });
 }
 
@@ -179,16 +201,21 @@ function numeric_click() {
 
 function reset_click() {
     reset.addEventListener("click", function () {
-        display.value = '0';
-        result_display.value = '0';
-        operation = '';
-        position_operation = 0;
+        reset_ac();
+    });
+}
+
+function backspace_click() {
+    document.getElementById('backspace').addEventListener("click", function () {
+        backspace();
     });
 }
 
 function bind_events() {
     reset_click();
     numeric_click();
+    comma_click();
+    backspace_click();
 
     invert_click();
     sum_click();
