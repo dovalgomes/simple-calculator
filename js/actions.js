@@ -8,19 +8,7 @@ var position_operation = 0;
 var operation = '';
 
 // Buttons Functions
-function numeric_click() {
-    for (var i = 0; i < numbers.length; i++) {
-        numbers[i].addEventListener("click", function () {
-            showDisplayValue(this.value);
-        })
-    }
-}
 
-function reset_click() {
-    reset.addEventListener("click", function () {
-        display.value = '0';
-    });
-}
 
 // Dislay Functions
 function showDisplayValue(value) {
@@ -34,28 +22,27 @@ function showDisplayValue(value) {
     }
 
     display.value += value;
+    equal(operation, true);
 
-    equal(operation);
+}
 
+function resumeDisplay(display_operation) {
+    if (display_operation.length % 5 === 0) {
+        display.value = result_display.value;
+    }
 }
 
 // Operations Functions
 
-function sum_click() {
-    document.getElementById('sum').addEventListener("click", function () {
-        sum();
-    });
-}
-
-function equal_click() {
-    document.getElementById('equal').addEventListener("click", function () {
-        equal(operation, true);
-    })
-}
-
 function sum() {
     if (!lastIsOperation()) {
         display.value += '+';
+    }
+}
+
+function sub() {
+    if (!lastIsOperation()) {
+        display.value += '-';
     }
 }
 
@@ -71,22 +58,24 @@ function equal(operation, resume) {
                 });
                 result_display.value = sum;
                 break;
+            case '-':
+                var sub = 0;
+                display_operation.map(value => {
+                    sub -= parseFloat(value);
+                });
+                result_display.value = sub;
+                break;
             default:
                 break;
         }
         resumeDisplay(display_operation);
-    }
 
-    if (resume) {
-        display.value = result_display.value;
+        if (resume) {
+            display.value = result_display.value;
+        }
     }
 }
 
-function resumeDisplay(display_operation) {
-    if (display_operation.length % 5 === 0) {
-        display.value = result_display.value;
-    }
-}
 
 function lastIsOperation() {
     const display_trim = display.value.trim();
@@ -96,10 +85,47 @@ function lastIsOperation() {
 }
 
 // DOM Functions
+
+function sum_click() {
+    document.getElementById('sum').addEventListener("click", function () {
+        sum();
+    });
+}
+
+function sub_click() {
+    document.getElementById('sub').addEventListener("click", function () {
+        sub();
+    });
+}
+
+function equal_click() {
+    document.getElementById('equal').addEventListener("click", function () {
+        equal(operation, true);
+    })
+}
+
+function numeric_click() {
+    for (var i = 0; i < numbers.length; i++) {
+        numbers[i].addEventListener("click", function () {
+            showDisplayValue(this.value);
+        })
+    }
+}
+
+function reset_click() {
+    reset.addEventListener("click", function () {
+        display.value = '0';
+        result_display.value = '0';
+        operation = '';
+        position_operation = 0;
+    });
+}
+
 function bind_events() {
     numeric_click();
     reset_click();
     sum_click();
+    sub_click();
     equal_click();
 }
 
