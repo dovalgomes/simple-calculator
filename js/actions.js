@@ -46,6 +46,12 @@ function sub() {
     }
 }
 
+function invert() {
+    if (display.value !== '0') {
+        display.value = parseFloat(display.value) * (-1);
+    }
+}
+
 function equal(operation, resume) {
     if (operation) {
         const display_operation = display.value.split(operation);
@@ -86,6 +92,12 @@ function lastIsOperation() {
 
 // DOM Functions
 
+function invert_click() {
+    document.getElementById('invert').addEventListener("click", function () {
+        invert();
+    });
+}
+
 function sum_click() {
     document.getElementById('sum').addEventListener("click", function () {
         sum();
@@ -122,8 +134,9 @@ function reset_click() {
 }
 
 function bind_events() {
-    numeric_click();
     reset_click();
+    numeric_click();
+    invert_click();
     sum_click();
     sub_click();
     equal_click();
