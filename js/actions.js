@@ -46,6 +46,18 @@ function sub() {
     }
 }
 
+function multiply() {
+    if (!lastIsOperation()) {
+        display.value += 'x';
+    }
+}
+
+function division() {
+    if (!lastIsOperation()) {
+        display.value += '÷';
+    }
+}
+
 function invert() {
     if (display.value !== '0') {
         display.value = parseFloat(display.value) * (-1);
@@ -56,27 +68,56 @@ function equal(operation, resume) {
     if (operation) {
         const display_operation = display.value.split(operation);
 
+        var sucess = false;
+
         switch (operation) {
             case '+':
                 var sum = 0;
                 display_operation.map(value => {
-                    sum += parseFloat(value);
+                    value = parseFloat(value);
+                    sum += value;
                 });
                 result_display.value = sum;
                 break;
             case '-':
                 var sub = 0;
                 display_operation.map(value => {
-                    sub -= parseFloat(value);
+                    value = parseFloat(value);
+                    sub -= value;
                 });
                 result_display.value = sub;
+                sucess = true;
+                break;
+            case 'x':
+                var multiply = 0;
+                var input1 = parseFloat(display_operation[0]);
+                var input2 = parseFloat(display_operation[1]);
+
+                multiply = input1 * input2;
+                result_display.value = multiply;
+                sucess = true;
+                break;
+            case '÷':
+                var division = 0;
+                var input1 = parseFloat(display_operation[0]);
+                var input2 = parseFloat(display_operation[1]);
+
+                if (input2 === 0) {
+                    display.value = 'Impossível Dividir por 0';
+                    sucess = false;
+                } else {
+                    division = input1 / input2;
+                    result_display.value = division;
+                    sucess = true;
+                }
                 break;
             default:
                 break;
         }
-        resumeDisplay(display_operation);
 
-        if (resume) {
+        // resumeDisplay(display_operation);
+
+        if (sucess) {
             display.value = result_display.value;
         }
     }
@@ -110,6 +151,18 @@ function sub_click() {
     });
 }
 
+function division_click() {
+    document.getElementById('division').addEventListener("click", function () {
+        division();
+    });
+}
+
+function multiply_click() {
+    document.getElementById('multiply').addEventListener("click", function () {
+        multiply();
+    });
+}
+
 function equal_click() {
     document.getElementById('equal').addEventListener("click", function () {
         equal(operation, true);
@@ -136,9 +189,12 @@ function reset_click() {
 function bind_events() {
     reset_click();
     numeric_click();
+
     invert_click();
     sum_click();
     sub_click();
+    multiply_click();
+    division_click();
     equal_click();
 }
 
