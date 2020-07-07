@@ -1,6 +1,9 @@
 # Simple Calculator
 
-This is a simple design of a calculator using pure javascript, html 5, bootrstrap and css. Without many frills, the objective of this project is to serve as an example for beginning programmers
+This is a simple design of a calculator using pure javascript, html 5, bootrstrap and css. Without many frills, the objective of this project is to serve as an example for beginning programmers.
+
+# Libraries used:
+- Boostrap 4
 
 ## Getting Started
 
@@ -16,6 +19,9 @@ With basic knowledge in HTML, Bootstrap and css you will be able to contribute.
 # Calculadora Simples
 
 Este é um design simples de uma calculadora usando javascript puro, html 5, bootrstrap e css. Sem muitos detalhes, o objetivo deste projeto é servir de exemplo para programadores iniciantes
+
+# Bibliotecas utilizadas:
+- Boostrap 4
 
 ## Iniciando
 
