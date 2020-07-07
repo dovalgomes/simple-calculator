@@ -16,11 +16,6 @@ function showDisplayValue(value) {
         display.value = '';
     }
 
-    // if (lastIsOperation()) {
-    //     position_operation = display.value.length - 1;
-    //     operation = display.value.substring(position_operation, position_operation + 1);
-    // }
-
     display.value += value;
 }
 
@@ -39,6 +34,7 @@ function backspace() {
 }
 
 function comma() {
+
 
     if (operation) {
         const display_operation = display.value.split(operation);
@@ -198,12 +194,32 @@ function equal_click() {
     })
 }
 
+function isOperation(simbol) {
+    return simbol === '+' || simbol === '-' || simbol === 'x' || simbol === '%' || simbol === '÷';
+}
+
 function numeric_click() {
     for (var i = 0; i < numbers.length; i++) {
         numbers[i].addEventListener("click", function () {
             showDisplayValue(this.value);
-        })
+        });
     }
+}
+
+function keyboard_event() {
+    document.addEventListener('keyup', function (event) {
+        if (!isNaN(event.key)) {
+            showDisplayValue(event.key);
+        } else if (event.key === '.' || event.key === ',') {
+            comma();
+        } else if (isOperation(event.key)) {
+            send_operation(event.key);
+        } else if (event.key === '=') {
+            equal();
+        } else if (event.key === 'Backspace') {
+            backspace();
+        }
+    })
 }
 
 function reset_click() {
@@ -231,6 +247,8 @@ function bind_events() {
     comma_click();
     backspace_click();
     percent_click();
+
+    keyboard_event();
 
     invert_click();
     sum_click();
