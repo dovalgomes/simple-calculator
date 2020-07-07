@@ -16,10 +16,10 @@ function showDisplayValue(value) {
         display.value = '';
     }
 
-    if (lastIsOperation()) {
-        position_operation = display.value.length - 1;
-        operation = display.value.substring(position_operation, position_operation + 1);
-    }
+    // if (lastIsOperation()) {
+    //     position_operation = display.value.length - 1;
+    //     operation = display.value.substring(position_operation, position_operation + 1);
+    // }
 
     display.value += value;
 }
@@ -44,7 +44,7 @@ function comma() {
         const display_operation = display.value.split(operation);
         var input2 = display_operation[1];
 
-        if(input2 && input2.indexOf('.') === -1){
+        if (input2 && input2.indexOf('.') === -1) {
             display.value += '.';
         }
 
@@ -64,6 +64,8 @@ function send_operation(operator) {
 
     if (!lastIsOperation()) {
         display.value += operator;
+
+        operation = operator;
     }
 }
 
@@ -74,59 +76,64 @@ function invert() {
 }
 
 function equal(resume) {
-
+    console.log(operation);
     try {
-        if (operation && !lastIsOperation()) {
+        if (operation) {
             const display_operation = display.value.split(operation);
 
-            switch (operation) {
-                case '+':
-                    var sum = 0;
-                    var input1 = parseFloat(display_operation[0]);
-                    var input2 = parseFloat(display_operation[1]);
+            if (operation == '%') {
+                var percent = parseFloat(display.value.replace('%', '')) / 100;
+                result_display.value = percent;
+            } else {
 
-                    sum = input1 + input2;
-                    result_display.value = sum;
-                    break;
-                case '-':
-                    var sub = 0;
-                    var input1 = parseFloat(display_operation[0]);
-                    var input2 = parseFloat(display_operation[1]);
+                if (!lastIsOperation()) {
+                    switch (operation) {
+                        case '+':
+                            var sum = 0;
+                            var input1 = parseFloat(display_operation[0]);
+                            var input2 = parseFloat(display_operation[1]);
 
-                    sub = input1 - input2;
-                    result_display.value = sub;
-                    break;
-                case 'x':
-                    var multiply = 0;
-                    var input1 = parseFloat(display_operation[0]);
-                    var input2 = parseFloat(display_operation[1]);
+                            sum = input1 + input2;
+                            result_display.value = sum;
+                            break;
+                        case '-':
+                            var sub = 0;
+                            var input1 = parseFloat(display_operation[0]);
+                            var input2 = parseFloat(display_operation[1]);
 
-                    multiply = input1 * input2;
-                    result_display.value = multiply;
-                    break;
-                case '÷':
-                    var division = 0;
-                    var input1 = parseFloat(display_operation[0]);
-                    var input2 = parseFloat(display_operation[1]);
+                            sub = input1 - input2;
+                            result_display.value = sub;
+                            break;
+                        case 'x':
+                            var multiply = 0;
+                            var input1 = parseFloat(display_operation[0]);
+                            var input2 = parseFloat(display_operation[1]);
 
-                    if (input2 === 0) {
-                        throw 'Impossível Dividir por 0';
-                    } else {
-                        division = input1 / input2;
-                        result_display.value = division;
+                            multiply = input1 * input2;
+                            result_display.value = multiply;
+                            break;
+                        case '÷':
+                            var division = 0;
+                            var input1 = parseFloat(display_operation[0]);
+                            var input2 = parseFloat(display_operation[1]);
+
+                            if (input2 === 0) {
+                                throw 'Impossível Dividir por 0';
+                            } else {
+                                division = input1 / input2;
+                                result_display.value = division;
+                            }
+                            break;
+                        default:
+                            break;
                     }
-                    break;
-                default:
-                    break;
+                }
             }
-
             display.value = result_display.value;
         }
 
         operation = undefined;
         position_operation = undefined;
-
-        console.log(operation);
 
     } catch (err) {
         reset_ac();
@@ -145,7 +152,7 @@ function lastIsOperation() {
     const display_trim = display.value.trim();
     const display_length = display_trim.length;
     const lastCharacter = display_trim.substring(display_length - 1);
-    return lastCharacter.indexOf('+') !== -1 || lastCharacter.indexOf('-') !== -1 || lastCharacter.indexOf('x') !== -1 || lastCharacter.indexOf('÷') !== -1
+    return lastCharacter.indexOf('+') !== -1 || lastCharacter.indexOf('-') !== -1 || lastCharacter.indexOf('x') !== -1 || lastCharacter.indexOf('÷') !== -1 || lastCharacter.indexOf('%') !== -1
 }
 
 // DOM Functions
@@ -187,7 +194,7 @@ function multiply_click() {
 
 function equal_click() {
     document.getElementById('equal').addEventListener("click", function () {
-        equal(operation, true);
+        equal(true);
     })
 }
 
@@ -211,11 +218,19 @@ function backspace_click() {
     });
 }
 
+function percent_click() {
+    document.getElementById('percent').addEventListener("click", function () {
+        send_operation('%');
+    });
+}
+
+
 function bind_events() {
     reset_click();
     numeric_click();
     comma_click();
     backspace_click();
+    percent_click();
 
     invert_click();
     sum_click();
